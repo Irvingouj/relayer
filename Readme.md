@@ -1,4 +1,4 @@
-# relayer
+# Coolify media relayer
 
 A minimal TCP reverse proxy written in Rust, designed for containerized deployment.
 
