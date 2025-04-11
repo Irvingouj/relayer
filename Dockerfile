@@ -1,22 +1,19 @@
-# Step 1: Build stage with latest stable Rust
+# Step 1: Build stage with musl for static linking
 FROM rust:1.81.0-slim AS builder
 
 WORKDIR /app
 COPY . .
 
-# Fetch dependencies and build
+# Install the musl target
+RUN rustup target add x86_64-unknown-linux-musl
+
+# Fetch dependencies and build with musl target
 RUN cargo fetch
-RUN cargo build --release
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
-# Step 2: Minimal runtime image
-FROM debian:bookworm-slim
+# Step 2: Runtime stage using scratch (empty base)
+FROM scratch
 
-# Install only what's needed for networking and TLS roots
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates netbase && \
-    rm -rf /var/lib/apt/lists/*
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/relayer /relayer
 
-# Copy the compiled binary
-COPY --from=builder /app/target/release/relayer /usr/local/bin/relayer
-
-ENTRYPOINT ["relayer"]
+ENTRYPOINT ["/relayer"]

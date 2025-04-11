@@ -2,6 +2,8 @@
 
 A minimal TCP reverse proxy written in Rust, designed for containerized deployment.
 
+Super tiny image size, only 1.8 MB
+
 ## 🔧 What It Does
 
 **relayer** listens on a specified local port and forwards all incoming TCP traffic to a remote address, defined via environment variable. It's useful for exposing internal services (like media servers or internal APIs) through a controlled proxy layer — especially behind a platform like [Coolify](https://coolify.io) or your own Traefik/Nginx frontend.
